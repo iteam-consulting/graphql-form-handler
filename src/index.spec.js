@@ -1,5 +1,10 @@
 
+const {createGraphQLFormHandlerMutation} = require('./index');
+
 test('we can import', () => {
-  const {createGraphQLFormHandlerMutation} = require('./index');
   expect(createGraphQLFormHandlerMutation).not.toBeNull();
+});
+
+test('null config throws exception', () => {
+  expect(() => createGraphQLFormHandlerMutation()).toThrow();
 });
