@@ -6,8 +6,8 @@
 * This source code is licensed under the MIT license found in the
 * LICENSE.txt file in the root directory of this source tree
 */
-const handlerbars = require('handlebars');
-const mailgun = require('mailgun-js');
+const handlebars = require('handlebars');
+const makeMailgun = require('mailgun-js');
 
 const {
   GraphQLNonNull,
@@ -45,17 +45,16 @@ const ResultType = new GraphQLObjectType({
  * Function that returns the html to be rendered in the email
  */
 function render(form, template) {
-  const formElements = [];
-  const compiledRowTemplate = handlebars.compile(`
-    <tr className="form-element">
-      <td className="key">{{key}}</td>
-      <td className="value">{{value}}</td>
-    </tr>`);
-  const compiledTemplate = handlerbars.compile(template);
+  const compiledRowTemplate = handlebars.compile(
+    '<tr class="form-element">' +
+      '<td class="key">{{key}}</td>' +
+      '<td class="value">{{value}}</td>' +
+    '</tr>');
+  const compiledTemplate = handlebars.compile(template);
 
-  form.forEach(({key, value}) => {
+  const formElements = form.map(({key, value}) => {
     if (key !== 'File') {
-      formElements.push(rowTemplate)({key, value: unescape(value)});
+      return compiledRowTemplate({key, value: unescape(value)});
     }
   });
 
@@ -67,9 +66,9 @@ function render(form, template) {
  * @param {object} request
  * @param {object} GraphQL arguments => form object and file buffer
  */
-const createSendFormHandler = (client, addressing) =>
-  async (req, {form, file}) => {
-    const html = render(form);
+const createSendFormHandler = (client, {template, ...addressing}) =>
+  (req, {form, file}) => {
+    const html = render(form, template);
     const data = {
       html,
       ...addressing,
@@ -91,7 +90,7 @@ const createSendFormHandler = (client, addressing) =>
           if (error) {
             reject({ success: false, error });
           } else {
-            resolve({ success: true, body });
+            resolve({success: true, body});
           }
         });
     });
@@ -114,7 +113,7 @@ export function createGraphQLFormHandlerMutation(config) {
   }
 
   const {from, to, subject, ...creds} = mailgun;
-  const emailClient = mailgun(creds);
+  const emailClient = makeMailgun(creds);
 
   return {
     type: ResultType,
@@ -123,6 +122,6 @@ export function createGraphQLFormHandlerMutation(config) {
       form: {type: ApplicationInputType},
       file: {type: FileInputType},
     },
-    resolve: createSendFormHandler(client, {from, to, subject}),
+    resolve: createSendFormHandler(emailClient, {from, to, subject, template}),
   };
 }
