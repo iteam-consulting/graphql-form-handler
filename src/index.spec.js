@@ -63,3 +63,23 @@ test('it can render a template', (done) => {
       done();
     });
 });
+
+test('it adds an attachment when a file is present', (done) => {
+  // Arrange && Act
+  const mutation = createGraphQLFormHandlerMutation(testConfig);
+  const {resolve} = mutation;
+
+  resolve({}, {
+    form: [],
+    file: {
+      buffer: 'Hello world',
+    }})
+    .then(({success}) => {
+      expect(success).toBe(true);
+      done();
+    })
+    .catch(({success}) => {
+      expect({success}).toBe(true);
+      done();
+    });
+});
