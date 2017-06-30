@@ -75,7 +75,7 @@ const createSendFormHandler = (client, {template, ...addressing}) =>
     };
 
     if (file) {
-      const attachment = new mailgun.Attachment({
+      const attachment = client.Attachment({
         data: new Buffer(file.buffer, 'base64'),
         filename: 'upload',
         contentType: 'application/pdf',
