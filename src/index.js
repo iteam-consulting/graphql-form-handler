@@ -37,12 +37,15 @@ const FileInputType = new GraphQLInputObjectType({
 const ResultType = new GraphQLObjectType({
   name: 'result',
   fields: {
-    success: { type: new GraphQLNonNull(GraphQLBoolean) },
+    success: {type: new GraphQLNonNull(GraphQLBoolean)},
   },
 });
 
 /**
  * Function that returns the html to be rendered in the email
+ * @param {array} form an array of key value pairs
+ * @param {string} template The template to compile.
+ * @return {string} The rendered template.
  */
 function render(form, template) {
   const compiledRowTemplate = handlebars.compile(
@@ -51,7 +54,7 @@ function render(form, template) {
       '<td class="value">{{value}}</td>' +
     '</tr>');
   const compiledTable = handlebars.compile(
-    '<table><tbody>{{{rows}}}</tbody></table>')
+    '<table><tbody>{{{rows}}}</tbody></table>');
   const compiledTemplate = handlebars.compile(template);
 
   const formElements = form.map(({key, value}) => {
@@ -69,8 +72,9 @@ function render(form, template) {
 
 /**
  * Function for sending the application via email
- * @param {object} request
+ * @param {object} client The mailgun client
  * @param {object} GraphQL arguments => form object and file buffer
+ * @return {function} The resolve handler
  */
 const createSendFormHandler = (client, {template, ...addressing}) =>
   (req, {form, file}) => {
@@ -94,14 +98,20 @@ const createSendFormHandler = (client, {template, ...addressing}) =>
         .messages()
         .send(data, (error, body) => {
           if (error) {
-            reject({ success: false, error });
+            reject({success: false, error});
           } else {
             resolve({success: true, body});
           }
         });
     });
-}
+};
 
+/**
+ * Create the mutation field schema.
+ * @param {object} config The config which should include a mailgun config
+ * object and a template string.
+ * @return {object} The mutation field schema.
+ */
 export function createGraphQLFormHandlerMutation(config) {
   if (!config) {
     throw new Error('You must provide a config to create the mutation.');

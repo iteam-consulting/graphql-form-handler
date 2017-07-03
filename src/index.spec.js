@@ -107,7 +107,7 @@ test('it rejects a promise', (done) => {
 
   // Act && Assert
   resolve({}, {
-    form: []
+    form: [],
   })
     .catch(({success}) => {
       expect(success).toBe(false);
