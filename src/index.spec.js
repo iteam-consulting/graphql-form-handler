@@ -5,7 +5,7 @@ const testConfig = {
   mailgun: {
     to: 'test@test.com',
     from: 'test@test.com',
-    subject: 'Test'
+    subject: 'Test',
   },
   template: '<html><body>{{{formData}}}</body></html>',
 };
