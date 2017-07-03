@@ -50,6 +50,8 @@ function render(form, template) {
       '<td class="key">{{key}}</td>' +
       '<td class="value">{{value}}</td>' +
     '</tr>');
+  const compiledTable = handlebars.compile(
+    '<table><tbody>{{{rows}}}</tbody></table>')
   const compiledTemplate = handlebars.compile(template);
 
   const formElements = form.map(({key, value}) => {
@@ -60,7 +62,9 @@ function render(form, template) {
     return null;
   });
 
-  return compiledTemplate({formData: formElements.join(' ')});
+  const formData = compiledTable({rows: formElements.join(' ')});
+
+  return compiledTemplate({formData});
 }
 
 /**
