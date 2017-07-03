@@ -38,7 +38,7 @@ test('it creates the mutation', () => {
   expect(createGraphQLFormHandlerMutation(testConfig)).not.toBeNull();
 });
 
-test('it creates the mutation with the correct arg types', () => {
+test('it creates the mutation with the correct file type', () => {
   // Arrange && Act
   const mutation = createGraphQLFormHandlerMutation(testConfig);
   const {file} = mutation.args;
@@ -46,6 +46,16 @@ test('it creates the mutation with the correct arg types', () => {
   // Assert
   expect(file.type.name).toBe('file');
   expect(file.type.getFields()).not.toBeNull();
+});
+
+test('it creates the mutation with the correct form types', () => {
+  // Arrange && Act
+  const mutation = createGraphQLFormHandlerMutation(testConfig);
+  const {form} = mutation.args;
+
+  // Assert
+  // expect(form.type.ofType.getFields()).toBe('application');
+  expect(form.type.ofType.getFields()).not.toBeNull();
 });
 
 test('it can render a template', (done) => {
