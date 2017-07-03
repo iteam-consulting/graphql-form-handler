@@ -1,7 +1,9 @@
 
 const mockClient = {
   send: (data, callback) => {
-    callback(null, data);
+    const {from, to} = data;
+    const error = !from || !to;
+    callback(error, data);
   },
 };
 

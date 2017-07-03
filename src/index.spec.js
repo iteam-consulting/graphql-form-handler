@@ -2,7 +2,11 @@
 const {createGraphQLFormHandlerMutation} = require('./index');
 
 const testConfig = {
-  mailgun: {},
+  mailgun: {
+    to: 'test@test.com',
+    from: 'test@test.com',
+    subject: 'Test'
+  },
   template: '<html><body>{{{formData}}}</body></html>',
 };
 
@@ -53,13 +57,13 @@ test('it can render a template', (done) => {
     form: [
       {key: 'first', value: 'value'},
       {key: 'second', value: 'another'},
-    ]})
+  ]})
     .then(({success, body}) => {
       expect(success).toBe(true);
       done();
     })
     .catch(({success}) => {
-      expect(success).toBe(true);
+      expect(success).toBe(false);
       done();
     });
 });
@@ -73,13 +77,28 @@ test('it adds an attachment when a file is present', (done) => {
     form: [],
     file: {
       buffer: 'Hello world',
-    }})
+  }})
     .then(({success}) => {
       expect(success).toBe(true);
       done();
     })
     .catch(({success}) => {
-      expect({success}).toBe(true);
+      expect(success).toBe(false);
+      done();
+    });
+});
+
+test('it rejects a promise', (done) => {
+  // Arrange && Act
+  delete testConfig.mailgun.to;
+  const mutation = createGraphQLFormHandlerMutation(testConfig);
+  const {resolve} = mutation;
+
+  resolve({}, {
+    form: []
+  })
+    .catch(({success}) => {
+      expect(success).toBe(false);
       done();
     });
 });
