@@ -1,6 +1,6 @@
 {
   "name": "graphql-form-handler",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "dependencies": {
     "graphql": "^0.10.3",
     "handlebars": "^4.0.10",
