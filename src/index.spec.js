@@ -54,15 +54,15 @@ test('it creates the mutation with the correct form types', () => {
   const {form} = mutation.args;
 
   // Assert
-  // expect(form.type.ofType.getFields()).toBe('application');
   expect(form.type.ofType.getFields()).not.toBeNull();
 });
 
 test('it can render a template', (done) => {
-  // Arrange && Act
+  // Arrange
   const mutation = createGraphQLFormHandlerMutation(testConfig);
   const {resolve} = mutation;
 
+  // Act && Assert
   resolve({}, {
     form: [
       {key: 'first', value: 'value'},
@@ -79,10 +79,11 @@ test('it can render a template', (done) => {
 });
 
 test('it adds an attachment when a file is present', (done) => {
-  // Arrange && Act
+  // Arrange
   const mutation = createGraphQLFormHandlerMutation(testConfig);
   const {resolve} = mutation;
 
+  // Act && Assert
   resolve({}, {
     form: [],
     file: {
@@ -99,14 +100,35 @@ test('it adds an attachment when a file is present', (done) => {
 });
 
 test('it rejects a promise', (done) => {
-  // Arrange && Act
+  // Arrange
   delete testConfig.mailgun.to;
   const mutation = createGraphQLFormHandlerMutation(testConfig);
   const {resolve} = mutation;
 
+  // Act && Assert
   resolve({}, {
     form: []
   })
+    .catch(({success}) => {
+      expect(success).toBe(false);
+      done();
+    });
+});
+
+test('formElements in render will return null when key is "File"', () => {
+  // Arrange
+  const mutation = createGraphQLFormHandlerMutation(testConfig);
+  const {resolve} = mutation;
+
+  // Act && Assert
+  resolve({}, {
+    form: [
+      {key: 'File', value: 'value'},
+  ]})
+    .then(({success, body}) => {
+      expect(success).toBe(true);
+      done();
+    })
     .catch(({success}) => {
       expect(success).toBe(false);
       done();

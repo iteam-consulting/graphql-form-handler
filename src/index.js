@@ -56,6 +56,8 @@ function render(form, template) {
     if (key !== 'File') {
       return compiledRowTemplate({key, value: unescape(value)});
     }
+
+    return null;
   });
 
   return compiledTemplate({formData: formElements.join(' ')});
