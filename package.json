@@ -1,12 +1,13 @@
 {
   "name": "graphql-form-handler",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "graphql": "^0.10.3",
     "handlebars": "^4.0.10",
     "mailgun-js": "^0.11.2"
   },
   "scripts": {
+    "build:release": "node ./scripts/build",
     "build": "webpack",
     "test": "jest"
   },
@@ -37,6 +38,7 @@
     "eslint": "^4.1.1",
     "eslint-config-google": "^0.8.0",
     "jest": "^20.0.4",
+    "json-beautify": "^1.0.1",
     "webpack": "^3.0.0",
     "webpack-node-externals": "^1.6.0"
   }
