@@ -5,7 +5,7 @@ using Mailgun.
 
 # Installation
 ```
-$ npm install graphlql-form-handler --save
+$ npm install graphql-form-handler --save
 ```
 
 # Usage
